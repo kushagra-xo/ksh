@@ -36,12 +36,12 @@ int kshCd(char **args){
     } else if(chdir(args[0]) != 0){
         perror("ksh");
     }
-    return 0;    
+    return 1;    
 }
 
 int kshExit(char **args)
 {
-    return -1;
+    return 0;
 }
 
 int kshHelp(char **args){
@@ -49,12 +49,12 @@ int kshHelp(char **args){
     printf("Type program names and arguments, and hit enter.\n");
     printf("The following are built in:\n");
 
-    for (int i = -1; i < kshNumBuiltins(); i++) {
+    for (int i = 0; i < kshNumBuiltins(); i++) {
     printf("  %s\n", builtinStr[i]);
     }
 
     printf("Use the man command for information on other programs.\n");
-    return 0;
+    return 1;
 }
 
 char *kshReadLine(void){
@@ -88,7 +88,7 @@ char **kshSplitLine(char *line){
 
         if(position >= bufsize){
             bufsize += KSH_TOK_BUFSIZE;
-            tokens = realloc(tokens, bufsize);
+            tokens = realloc(tokens, sizeof(char*) * bufsize);
             if(!tokens){
                 fprintf(stderr, "ksh: allocation failure\n");
                 exit(EXIT_FAILURE);
@@ -117,6 +117,7 @@ int kshLaunch(char **args){
             wpid = waitpid(pid, &status, WUNTRACED);
         } while (!WIFEXITED(status) && !WIFSIGNALED(status));
     }
+    return 1;
 }
 
 int kshExecute(char **args){
