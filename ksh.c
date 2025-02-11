@@ -32,7 +32,7 @@ int kshNumBuiltins() {
 int kshCd(char **args){
     if (args[1] == NULL)
     {
-        fprintf(stderr, "lsh: expected argument to \"cd\"\n");
+        fprintf(stderr, "ksh: expected argument to \"cd\"\n");
     } else if(chdir(args[1]) != 0){
         perror("ksh");
     }
@@ -64,7 +64,7 @@ char *kshReadLine(void){
         if(feof(stdin))
             exit(EXIT_SUCCESS);
         else{
-            perror("readline");
+            perror("ksh: readline");
             exit(EXIT_FAILURE);
         }
     }
