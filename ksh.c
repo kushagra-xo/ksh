@@ -30,10 +30,10 @@ int kshNumBuiltins() {
 }
 
 int kshCd(char **args){
-    if (args[0] == NULL)
+    if (args[1] == NULL)
     {
         fprintf(stderr, "lsh: expected argument to \"cd\"\n");
-    } else if(chdir(args[0]) != 0){
+    } else if(chdir(args[1]) != 0){
         perror("ksh");
     }
     return 1;    
