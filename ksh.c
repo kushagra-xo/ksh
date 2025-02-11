@@ -11,20 +11,25 @@
 #define KSH_SUCCESS 0
 #define KSH_FAILURE 1
 
+char *prompt = "> ";
+
 int kshCd(char **args);
 int kshExit(char **args);
 int kshHelp(char **args);
+int kshPrompt(char **args);
 
 char *builtinStr[] = {
     "cd",
     "exit",
-    "help"
+    "help",
+    "setprompt"
 };
 
 int (*builtinFunc[]) (char **) = {
     &kshCd,
     &kshExit,
-    &kshHelp
+    &kshHelp,
+    &kshPrompt
 };
 
 int kshNumBuiltins() {
@@ -55,6 +60,20 @@ int kshHelp(char **args){
 
     printf("Use the man command for information on other programs.\n");
     return KSH_SUCCESS;
+}
+
+int kshPrompt(char **args){
+    if (args[1] == NULL){
+        fprintf(stderr, "ksh: expected argument to \"setprompt\"\n");
+        return KSH_FAILURE;
+    } else{
+        prompt = strdup(args[1]);
+        if(!prompt){
+            fprintf(stderr, "ksh: allocation failure");
+            return KSH_FAILURE;
+        }
+        return KSH_SUCCESS;
+    }
 }
 
 char *kshReadLine(void){
@@ -135,7 +154,7 @@ void kshLoop(void){
     int status;
 
     do {
-        printf("> ");
+        printf("%s", prompt);
         line = kshReadLine();
         args = kshSplitLine(line);
         status = kshExecute(args);
