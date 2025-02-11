@@ -8,6 +8,8 @@
 
 #define KSH_TOK_BUFSIZE 64
 #define KSH_TOK_DELIM " \t\r\n\a"
+#define KSH_SUCCESS 0
+#define KSH_FAILURE 1
 
 int kshCd(char **args);
 int kshExit(char **args);
@@ -34,12 +36,12 @@ int kshCd(char **args){
         fprintf(stderr, "ksh: expected argument to \"cd\"\n");
     else if(chdir(args[1]) != 0)
         perror("ksh");
-    return 1;    
+    return KSH_SUCCESS;    
 }
 
 int kshExit(char **args)
 {
-    return 0;
+    return KSH_FAILURE;
 }
 
 int kshHelp(char **args){
@@ -52,7 +54,7 @@ int kshHelp(char **args){
     }
 
     printf("Use the man command for information on other programs.\n");
-    return 1;
+    return KSH_SUCCESS;
 }
 
 char *kshReadLine(void){
@@ -114,12 +116,12 @@ int kshLaunch(char **args){
             wpid = waitpid(pid, &status, WUNTRACED);
         } while (!WIFEXITED(status) && !WIFSIGNALED(status));
     }
-    return 1;
+    return KSH_SUCCESS;
 }
 
 int kshExecute(char **args){
     if(args[0] == NULL)
-        return 1;
+        return KSH_SUCCESS;
     for (int i = 0; i < kshNumBuiltins(); i++) {
         if (strcmp(args[0], builtinStr[i]) == 0) 
             return (*builtinFunc[i])(args);
@@ -132,7 +134,7 @@ void kshLoop(void){
     char** args;
     int status;
 
-    do     {
+    do {
         printf("> ");
         line = kshReadLine();
         args = kshSplitLine(line);
@@ -140,7 +142,7 @@ void kshLoop(void){
 
         free(line);
         free(args);
-    } while (status);
+    } while (status == KSH_SUCCESS);
     
 }
 
